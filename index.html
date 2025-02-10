@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Alarm Clock</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #alarm-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        #emoji-container {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            margin-top: 20px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .emoji {
+            position: absolute;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            animation: move 3s infinite alternate ease-in-out;
+        }
+        .emoji:hover {
+            transform: scale(1.2);
+        }
+        @keyframes move {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(50px); }
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        input {
+            padding: 8px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Emoji Alarm Clock ⏰</h1>
+    <div id="alarm-container">
+        <label for="alarm-time">Set Alarm:</label>
+        <input type="time" id="alarm-time">
+        <button onclick="setAlarm()">Set Alarm</button>
+    </div>
+    <div id="emoji-container"></div>
+    <script>
+        let alarmTime;
+        let alarmSound = new Audio("https://www.soundjay.com/button/beep-07.wav");
+        alarmSound.loop = true;
+
+        function setAlarm() {
+            alarmTime = document.getElementById("alarm-time").value;
+            alert("Alarm set for " + alarmTime);
+            checkAlarm();
+        }
+
+        function checkAlarm() {
+            setInterval(() => {
+                let currentTime = new Date().toLocaleTimeString('en-GB', { hour: "2-digit", minute: "2-digit" });
+                if (currentTime === alarmTime) {
+                    startAlarm();
+                }
+            }, 1000);
+        }
+
+        function startAlarm() {
+            alarmSound.play();
+            generateEmojis();
+        }
+
+        function generateEmojis() {
+            let container = document.getElementById("emoji-container");
+            container.innerHTML = "";
+            let totalEmojis = 10;
+            let oddIndex = Math.floor(Math.random() * totalEmojis);
+            let normalEmoji = "😀";
+            let oddEmoji = "😎";
+            
+            for (let i = 0; i < totalEmojis; i++) {
+                let emoji = document.createElement("div");
+                emoji.className = "emoji";
+                emoji.innerHTML = (i === oddIndex) ? oddEmoji : normalEmoji;
+                emoji.style.top = Math.random() * 150 + "px";
+                emoji.style.left = Math.random() * 80 + "%";
+                if (i === oddIndex) {
+                    emoji.dataset.correct = "true";
+                }
+                emoji.addEventListener("click", function() {
+                    if (this.dataset.correct) {
+                        alarmSound.pause();
+                        container.innerHTML = "";
+                    }
+                });
+                container.appendChild(emoji);
+            }
+        }
+    </script>
+</body>
+</html>
